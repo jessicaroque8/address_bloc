@@ -10,10 +10,11 @@ require_relative '../models/address_book'
    def main_menu
      puts "Main Menu - #{address_book.entries.count} entries"
      puts "1 - View all entries"
-     puts "2 - Create an entry"
-     puts "3 - Search for an entry"
-     puts "4 - Import entries from a CSV"
-     puts "5 - Exit"
+     puts "2 - View by entry number"
+     puts "3 - Create an entry"
+     puts "4 - Search for an entry"
+     puts "5 - Import entries from a CSV"
+     puts "6 - Exit"
      print "Enter your selection: "
 
      selection = gets.to_i
@@ -26,17 +27,29 @@ require_relative '../models/address_book'
         main_menu
       when 2
         system "clear"
-        create_entry
+        puts "Enter desired entry number: "
+        entry_number = gets.chomp
+        until address_book.entries[entry_number.to_i]
+           system "clear"
+           puts "Oops, that wasn't a valid entry number."
+           puts "Please enter a valid entry number."
+           entry_number = gets.chomp
+        end
+        view_by_entry_number(entry_number)
         main_menu
       when 3
         system "clear"
-        search_entries
+        create_entry
         main_menu
       when 4
         system "clear"
-        read_csv
+        search_entries
         main_menu
       when 5
+        system "clear"
+        read_csv
+        main_menu
+      when 6
         puts "Good-bye!"
         exit(0)
       else
@@ -57,6 +70,18 @@ require_relative '../models/address_book'
 
       system "clear"
       puts "End of entries"
+   end
+
+   def view_by_entry_number(entry_number)
+      system "clear"
+      puts "Viewing Entry #{entry_number}"
+
+      number = entry_number.to_i
+      puts address_book.entries[number].to_s
+
+      entry_submenu(entry_number)
+
+      system "clear"
    end
 
    def create_entry
