@@ -27,15 +27,7 @@ require_relative '../models/address_book'
         main_menu
       when 2
         system "clear"
-        puts "Enter desired entry number: "
-        entry_number = gets.chomp
-        until address_book.entries[entry_number.to_i]
-           system "clear"
-           puts "Oops, that wasn't a valid entry number."
-           puts "Please enter a valid entry number."
-           entry_number = gets.chomp
-        end
-        view_by_entry_number(entry_number)
+        view_by_entry_number
         main_menu
       when 3
         system "clear"
@@ -72,9 +64,17 @@ require_relative '../models/address_book'
       puts "End of entries"
    end
 
-   def view_by_entry_number(entry_number)
+   def view_by_entry_number
       system "clear"
-      puts "Viewing Entry #{entry_number}"
+      puts "Enter desired entry number: "
+      entry_number = gets.chomp
+      until address_book.entries[entry_number.to_i]
+         puts "Oops, that wasn't a valid entry number."
+         puts "Please enter a valid entry number."
+         entry_number = gets.chomp
+      end
+      system "clear"
+      puts "Entry #{entry_number}"
 
       number = entry_number.to_i
       puts address_book.entries[number].to_s
