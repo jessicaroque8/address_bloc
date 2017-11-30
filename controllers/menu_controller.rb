@@ -38,10 +38,6 @@ require_relative '../models/address_book'
         read_csv
         main_menu
       when 5
-        system "clear"
-        delete_all_entries
-        main_menu
-      when 6
         puts "Good-bye!"
         exit(0)
       else
@@ -196,21 +192,4 @@ require_relative '../models/address_book'
       puts "Updated entry:"
       puts entry
    end
-
-   def delete_all_entries
-      puts "Are you sure you want to delete all entries?"
-      puts "Enter 'y' for yes or 'n' for no."
-      confirmation = gets.chomp
-
-      case confirmation
-         when "y"
-            address_book.nuke
-            system "clear"
-            puts "All entries have been deleted."
-         when "n"
-            system "clear"
-            puts "No entries deleted."
-      end
-   end
-
  end
