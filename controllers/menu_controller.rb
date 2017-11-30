@@ -13,7 +13,8 @@ require_relative '../models/address_book'
      puts "2 - Create an entry"
      puts "3 - Search for an entry"
      puts "4 - Import entries from a CSV"
-     puts "5 - Exit"
+     puts "5 - Delete all entries"
+     puts "6 - Exit"
      print "Enter your selection: "
 
      selection = gets.to_i
@@ -37,6 +38,10 @@ require_relative '../models/address_book'
         read_csv
         main_menu
       when 5
+        system "clear"
+        delete_all_entries
+        main_menu
+      when 6
         puts "Good-bye!"
         exit(0)
       else
@@ -78,9 +83,66 @@ require_relative '../models/address_book'
    end
 
    def search_entries
+      print "Search by name: "
+      name = gets.chomp
+      # #10
+      match = address_book.binary_search(name)
+      system "clear"
+      # #11
+      if match
+        puts match.to_s
+        search_submenu(match)
+      else
+        puts "No match found for #{name}"
+      end
+   end
+
+   def search_submenu(entry)
+      puts "\nd - delete entry"
+      puts "e - edit this entry"
+      puts "m - return to main menu"
+      selection = gets.chomp
+
+      case selection
+         when "d"
+            system "clear"
+            delete_entry(entry)
+            main_menu
+         when "e"
+            edit_entry(entry)
+            system "clear"
+            main_menu
+         when "m"
+            system "clear"
+            main_menu
+         else
+            system "clear"
+            puts "#{selection} is not a valid input"
+            puts entry.to_s
+            search_submenu(entry)
+      end
    end
 
    def read_csv
+      print "Enter CSV file to import: "
+      file_name = gets.chomp
+
+      # #2
+      if file_name.empty?
+        system "clear"
+        puts "No CSV file read"
+        main_menu
+      end
+
+      # #3
+      begin
+        entry_count = address_book.import_from_csv(file_name).count
+        system "clear"
+        puts "#{entry_count} new entries added from #{file_name}"
+      rescue
+        puts "#{file_name} is not a valid CSV file, please enter the name of a valid CSV file"
+        read_csv
+      end
    end
 
    def entry_submenu(entry)
@@ -98,8 +160,10 @@ require_relative '../models/address_book'
        when "n"
      # #19
        when "d"
+          delete_entry(entry)
        when "e"
-     # #20
+          edit_entry(entry)
+          entry_submenu(entry)
        when "m"
          system "clear"
          main_menu
@@ -109,4 +173,44 @@ require_relative '../models/address_book'
          entry_submenu(entry)
      end
    end
+
+   def delete_entry(entry)
+      address_book.entries.delete(entry)
+      puts "#{entry.name} has been deleted"
+   end
+
+   def edit_entry(entry)
+      # #4
+      print "Updated name: "
+      name = gets.chomp
+      print "Updated phone number: "
+      phone_number = gets.chomp
+      print "Updated email: "
+      email = gets.chomp
+      # #5
+      entry.name = name if !name.empty?
+      entry.phone_number = phone_number if !phone_number.empty?
+      entry.email = email if !email.empty?
+      system "clear"
+      # #6
+      puts "Updated entry:"
+      puts entry
+   end
+
+   def delete_all_entries
+      puts "Are you sure you want to delete all entries?"
+      puts "Enter 'y' for yes or 'n' for no."
+      confirmation = gets.chomp
+
+      case confirmation
+         when "y"
+            address_book.nuke
+            system "clear"
+            puts "All entries have been deleted."
+         when "n"
+            system "clear"
+            puts "No entries deleted."
+      end
+   end
+
  end
